@@ -25,7 +25,7 @@ help: |
   classintra_admin / classintra_admin_confirm / classintra_admin_cancel、download_video。
 
   详见仓库 README。
-version: 2.0.0
+version: 2.0.1
 author: Nevino
 repo: https://github.com/ClassIntra/astrbot_plugin_classintra
 # 市场标签：用于插件市场的分类与搜索（可选字段）。

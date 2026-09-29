@@ -1,5 +1,42 @@
 # 更新日志
 
+## v2.0.1（2026-09-29）
+
+**首次上架前的收尾版**（v2.0.0 标签之后的全部改动）。
+
+修复：
+
+- **图标用错了**：`logo.png` 原先是品牌「深蓝渐变底 + 白色标识」的**方形标**
+  （`logo-mark-square.png`，品牌定义用于关于页 / favicon），而市场要的是**彩色**标识。
+  改用品牌彩色标识 `logo-mark.png` 重新构图：裁掉透明留白 → 512×512 居中 → 白底圆角，
+  深浅色界面下都是彩色且有轮廓。
+- `metadata.yaml` 的 `version` 由 `v2.0.0` 改为纯语义化 `2.0.0`（市场规范要求市场记录与
+  metadata 的 `version` **精确相等**，带 `v` 前缀会影响版本比较）。
+
+元数据：
+
+- 新增 `tags`（工具 / 记忆 / 管理 / 下载 / 集成），用于插件市场的分类与搜索。
+
+新增工具：
+
+- `_make_plugin_logo.py`：从品牌彩色标重新生成方形插件图标
+  （`--bg none|white|brand`；品牌换标后重跑即可）。
+
+发布自检（`_check_release_ready.py`，24 项 → **30 项**）：
+
+- 新增 **K 段**，把[插件市场 JSON 规范](https://docs.astrbot.app/dev/plugin-market/2026-06-27.html)
+  编码成守门人：`version` 纯语义化｜`author` / `name` 合法｜`name` 以 `astrbot_plugin_` 开头｜
+  `repo` 是合规 GitHub HTTPS 仓库 URL｜`tags` 是字符串数组｜打包体积 ≤ 16MB。
+- A2 / A3（`__pycache__` / `.pyc`）判据修正为「**会不会进发布包**」：AstrBot 运行时必然
+  生成字节码，被 `.gitignore` 排除即放行，避免常态化误报。
+
+上架路线（旧文档已过时，已更正）：
+
+- 官方提交入口是 <https://cloud.astrbot.app/publish>（需 AstrBot Cloud 账号）；
+  旧的 `AstrBotDevs/AstrBot_Plugins_Collection` 提 PR 方式**已弃用**。
+
+---
+
 ## v2.0.0（2026-09-29）
 
 **首次对外发布。** 三个自研插件合并为一个统一入口：
@@ -22,9 +59,8 @@
 
 文档与元数据：
 
-- 补 `display_name` / `short_desc` / `help` / `repo` / `tags`，新增 `README.md`、`LICENSE`（MIT）、
+- 补 `display_name` / `short_desc` / `help` / `repo`，新增 `README.md`、`LICENSE`（MIT）、
   `logo.png`、`docs/`（架构 / 配置 / API / 工具 / 部署 / 开发 / 排障七篇）。
-- `version` 改为纯语义化 `2.0.0`（原先带 `v` 前缀，不符合插件市场规范的版本比较口径）。
 
 ### 兼容性说明
 
