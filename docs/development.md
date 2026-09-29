@@ -168,7 +168,11 @@ tool_loop_agent_runner: Agent 使用工具: [...]
 
    > 脚本开头 `sys.dont_write_bytecode = True` —— 它会 import 插件，别因此生成 `__pycache__` 把自己判不合格。
 
-4. **同步发布资产**：`logo.png`（512×512，来自品牌方形标）、`README.md`、`docs/`；
+4. **同步发布资产**：`logo.png`（512×512）、`README.md`、`docs/`；
+   logo 是 512×512 方形图标，用**品牌彩色标识**（`Resources/public/brand/logo-mark.png`）
+   居中构图，**不要**直接拿 `logo-mark-square.png` —— 那是「深蓝底 + 白标」的方形标
+   （品牌定义用于关于页 / favicon），市场要的是彩色的那个。重生成：
+   `PYTHONPATH= ./.venv/Scripts/python.exe _make_plugin_logo.py [--bg none|white|brand]`；
 5. **提交**：常规提交信息，说明「新增/修复什么 + 为什么」；
 6. **发市场**：仓库推公开后，到 **<https://cloud.astrbot.app/publish>** 提交（需注册
    AstrBot Cloud 账号）。系统会自动解析仓库里的 `metadata.yaml`。
