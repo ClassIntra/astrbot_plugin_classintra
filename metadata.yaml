@@ -1,0 +1,33 @@
+name: astrbot_plugin_classintra
+display_name: ClassIntra 接入
+short_desc: 把 AstrBot 机器人接进 ClassIntra 校园内网平台：发帖 / 管理代理 / 视频下载 / 跨会话人物档案。
+desc: >
+  将 AstrBot 机器人接入 ClassIntra 校园内网平台的统一入口插件（已合并原 ci_downloader 与 linxi_memory）。
+  ① HTTP API（POST /api/chat）让 ClassIntra 以机器人身份调用 AstrBot 完整管线（人设 / 工具调用 /
+  会话记忆），并带资源代理；② 社区发帖、读帖、删帖、撤回、信息读取，以及 ClassIntra 管理代理
+  （发公告、封禁、锁屏、PM2 等，破坏性动作走两段式确认）；③ 视频下载（公共聊天室全员可用，
+  私聊限授权人）；④ 跨会话人物档案 + 学别人讲话（档案注入 / 异步抽取 / 向量召回 / 风格卡）。
+  需配合 ClassIntra 服务端及其 astrbot-relay 插件使用。
+help: |
+  前置条件：已部署 ClassIntra 服务端，并在其中启用 astrbot-relay 插件。
+  安装后到插件配置页填写：ClassIntra 仓库根目录（或 botmedia 目录）、publish_base_url、
+  publish_key、owner_user_ids。管理动作只有 owner_user_ids 里的人能指挥，破坏性动作
+  （封禁 / 删除 / 锁屏 / 重启等）需要复述后二次确认才会执行。
+
+  指令：
+    /ci_status   查看接入状态
+    /记忆        查看 / 管理这个人的档案
+    /学说话      立即学一次群里 / 私聊的说话风格
+    /风格        查看当前风格卡与群近况
+
+  LLM 工具：publish_classintra_post、read_classintra_post、delete_classintra_post、
+  comment_classintra_post、recall_classintra_messages、read_classintra_info、
+  classintra_admin / classintra_admin_confirm / classintra_admin_cancel、download_video。
+
+  详见仓库 README。
+version: v2.0.0
+author: Nevino
+repo: https://github.com/ClassIntra/astrbot_plugin_classintra
+# 未声明 astrbot_version：本插件用到 on_llm_request / on_agent_done / after_message_sent
+# 等较新的钩子，仅在 AstrBot v4.28 上实测过，低版本未验证，故不写死兼容区间以免误放行。
+# 不写 support_platforms = 全部平台可用（本插件用 @filter.platform_adapter_type(ALL) 注册）。

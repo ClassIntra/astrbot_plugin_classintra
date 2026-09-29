@@ -1,0 +1,5 @@
+# 合并后的依赖说明（原三个插件都没有额外 pip 依赖）：
+#   * HTTP API / 资源代理：aiohttp（AstrBot 内置）
+#   * 视频下载：yt-dlp 可执行文件（不走上游包，路径见 downloader.YTDLP），ffmpeg 走 PATH 前置
+#   * 人物档案 / 风格卡：标准库 sqlite3 + contextlib（无第三方依赖）
+# 因此本文件无需声明任何 pip 包。

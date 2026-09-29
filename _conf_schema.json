@@ -1,0 +1,266 @@
+{
+  "api_host": {
+    "description": "API 监听地址",
+    "type": "string",
+    "default": "127.0.0.1",
+    "hint": "SSH 隧道目标是服务器本机，保持 127.0.0.1 更安全；仅当 ClassIntra 服务器与 AstrBot 同网段直连时才改为 0.0.0.0"
+  },
+  "api_port": {
+    "description": "API 监听端口",
+    "type": "int",
+    "default": 6200,
+    "hint": "ClassIntra 侧 SSH 隧道命令：ssh -L 9999:localhost:<该端口> user@bot。端口被占用时插件会在日志里报错并跳过 HTTP API（其余功能不受影响），改一个空闲端口即可。"
+  },
+  "api_token": {
+    "description": "访问令牌",
+    "type": "string",
+    "default": "",
+    "hint": "非空时，请求头 X-ClassIntra-Token 必须携带该值；需与 ClassIntra 插件配置一致。留空则不校验（仅建议隧道内使用）"
+  },
+  "request_timeout": {
+    "description": "同步请求最长等待秒数",
+    "type": "int",
+    "default": 120,
+    "hint": "LLM + 工具调用可能较慢，需大于 ClassIntra 插件的 HTTP 超时"
+  },
+  "max_images": {
+    "description": "单次请求最多处理的图片数量",
+    "type": "int",
+    "default": 4,
+    "hint": "超出部分会被丢弃；配合视觉模型使用时才需要调大"
+  },
+  "max_resource_mb": {
+    "description": "单个输出资源文件大小上限（MB）",
+    "type": "int",
+    "default": 20,
+    "hint": "超过上限的资源不走资源代理（避免大文件把内存打爆）"
+  },
+  "publish_base_url": {
+    "description": "ClassIntra 服务器 HTTP 地址（论坛发帖 / 管理动作回调用）",
+    "type": "string",
+    "default": "http://127.0.0.1:9001",
+    "hint": "与 ClassIntra server/.env 中 PORT 一致；同机部署保持 127.0.0.1"
+  },
+  "publish_key": {
+    "description": "论坛发帖 / 管理动作共享密钥（与 ClassIntra server/.env 的 ASTRBOT_PUBLISH_KEY 一致）",
+    "type": "string",
+    "default": "",
+    "hint": "留空则 AI 无法使用发帖与管理动作工具"
+  },
+  "classintra_root": {
+    "description": "ClassIntra 仓库根目录（本机绝对路径）",
+    "type": "string",
+    "default": "",
+    "hint": "例：D:\\ClassIntra。填了它，媒体目录与数据库会自动按 <root>/Resources/cloud/botmedia/remote 与 <root>/server/database/classintra.db 推导；下面两项单独填则优先于它。**视频下载与资源代理必须先配这一组路径**，否则对应功能会提示未配置。"
+  },
+  "classintra_media_dir": {
+    "description": "botmedia 目录（机器人产出的视频/图片落盘处）",
+    "type": "string",
+    "default": "",
+    "hint": "优先级高于「ClassIntra 仓库根目录」。需是 ClassIntra 静态挂载为 /resources/cloud/botmedia/remote/ 的那个目录。"
+  },
+  "classintra_db": {
+    "description": "ClassIntra 的 SQLite 库路径（只读查询）",
+    "type": "string",
+    "default": "",
+    "hint": "仅用于判断视频是否已被转存到云盘（决定清理时能否删除）。留空则一律保守不删。"
+  },
+  "botmedia_url_base": {
+    "description": "botmedia 的静态挂载 URL 前缀",
+    "type": "string",
+    "default": "",
+    "hint": "留空用 /resources/cloud/botmedia/remote/；只在 ClassIntra 改了挂载点时才需要改。"
+  },
+  "owner_user_ids": {
+    "description": "授权人（CI 管理员 user_id，逗号分隔）",
+    "type": "string",
+    "default": "",
+    "hint": "统一名单：管理动作只能由这些人指挥；私聊里的视频下载也只对这些账号开放（原 ci_downloader 的 admins 已合并到这里）。**留空则无人有权限**（管理动作全部拒绝、私聊下载不开放）——首次使用请务必填写。"
+  },
+  "persona_tag_enable": {
+    "description": "把人格标签转换为表情",
+    "type": "bool",
+    "default": true,
+    "hint": "人设使用 &&标签&&（如 &&fool&&）表达情绪，但框架没有对应替换方，会原样发给用户。开启后在文本出口统一转成 emoji；关闭则保持原样"
+  },
+  "persona_tag_map": {
+    "description": "人格标签→表情映射（可选覆盖）",
+    "type": "string",
+    "default": "",
+    "hint": "留空使用内置映射（fool=😏 sigh=😔 happy=😄 ...）。自定义格式：fool=😏 sigh=😔，写 tag=- 表示删除该标签。仅替换一或两个 & 包裹的完整标签，不会影响 ?a=1&b=2 这类普通文本"
+  },
+  "dl_max_size_mb": {
+    "description": "[下载] 单个视频体积上限（MB）",
+    "type": "int",
+    "default": 200,
+    "hint": "超过上限的文件会在下载后删除并提示失败。720p 的 B 站视频通常在 20~200MB。"
+  },
+  "dl_timeout_seconds": {
+    "description": "[下载] 单次下载超时（秒）",
+    "type": "int",
+    "default": 180,
+    "hint": "超时后终止 yt-dlp 并告知用户失败。到 ClassIntra 服务端的传输（Syncthing 同步）不在此限时内。"
+  },
+  "dl_max_videos": {
+    "description": "[下载] 视频数量上限（保留最新 N 个）",
+    "type": "int",
+    "default": 100,
+    "hint": "下载目录内视频超过此数量时，按最旧优先逐个删除；已被转存到 ClassIntra 云盘的文件会跳过（不删）。插件启动时也会执行一次清理。"
+  },
+  "ytdlp_path": {
+    "description": "[下载] yt-dlp 可执行文件路径",
+    "type": "string",
+    "default": "",
+    "hint": "留空则用 PATH 里的 `yt-dlp`（Windows venv 下通常是 <venv>\\Scripts\\yt-dlp.exe）。找不到时下载会直接失败并提示。"
+  },
+  "ffmpeg_dir": {
+    "description": "[下载] ffmpeg 所在目录",
+    "type": "string",
+    "default": "",
+    "hint": "会被前置到子进程 PATH。留空则用系统 PATH 里的 ffmpeg（需要合并音视频流，缺了会导致部分站点下载失败）。"
+  },
+  "memory_enable": {
+    "description": "[记忆] 启用跨会话人物档案",
+    "type": "bool",
+    "default": true,
+    "hint": "关闭后不再读写档案，也不注入任何记忆（此键即原 linxi_memory 的 enable）"
+  },
+  "extract_every_n_turns": {
+    "description": "[记忆] 每多少轮抽取一次档案（首轮必抽）",
+    "type": "int",
+    "default": 4,
+    "hint": "抽取会额外调用一次 LLM。调大省钱但记得慢，调小记得快但更费。"
+  },
+  "max_facts": {
+    "description": "[记忆] 每人最多保留多少条事实",
+    "type": "int",
+    "default": 40,
+    "hint": "超出后保留最新的，旧的丢弃。配有向量召回时，条数多也不会撑爆注入预算。"
+  },
+  "max_inject_chars": {
+    "description": "[记忆] 每轮注入的最大字符数",
+    "type": "int",
+    "default": 400,
+    "hint": "控制上下文膨胀；超出会截断"
+  },
+  "recall_enable": {
+    "description": "[记忆] 启用向量召回（按本轮问题挑最相关的事实）",
+    "type": "bool",
+    "default": true,
+    "hint": "档案条数 ≤ recall_top_k 时自动走快路径，不调用任何模型；失败自动降级为「最近 N 条」"
+  },
+  "recall_top_k": {
+    "description": "[记忆] 每轮注入的事实条数",
+    "type": "int",
+    "default": 8,
+    "hint": "只注入这么多条最相关的。调大更全面但更占注入预算"
+  },
+  "recall_candidates": {
+    "description": "[记忆] 向量粗排候选数（交给 rerank 精排）",
+    "type": "int",
+    "default": 20,
+    "hint": "需 ≥ recall_top_k。越大越准、越慢"
+  },
+  "embed_provider_id": {
+    "description": "[记忆] 向量模型 Provider ID",
+    "type": "string",
+    "default": "gitee_embedding",
+    "hint": "留空或不存在则自动跳过召回（降级为全量/最近注入）"
+  },
+  "rerank_provider_id": {
+    "description": "[记忆] 重排模型 Provider ID",
+    "type": "string",
+    "default": "gitee_rerank",
+    "hint": "留空则只用向量余弦排序。rerank 单独挂掉不影响召回"
+  },
+  "recall_timeout": {
+    "description": "[记忆] 召回超时（秒）",
+    "type": "float",
+    "default": 4.0,
+    "hint": "超时即降级，绝不让记忆层拖慢对话"
+  },
+  "extract_provider_id": {
+    "description": "[记忆] 抽取用的模型 ID",
+    "type": "string",
+    "default": "",
+    "hint": "留空则用当前会话模型。建议填最便宜最快的那个"
+  },
+  "exclude_user_ids": {
+    "description": "[记忆] 不建档案的 user_id（空格分隔）",
+    "type": "string",
+    "default": "",
+    "hint": "测试号/探针号建议加进来，避免污染档案库"
+  },
+  "style_enable": {
+    "description": "[记忆] 启用「学别人讲话」（风格卡 + 群近况）",
+    "type": "bool",
+    "default": true,
+    "hint": "旁路采集别人的发言 -> 提炼语气词/黑话/说话习惯 + 群近况，注入对话。关闭后不再学习也不再注入。"
+  },
+  "style_every_n_messages": {
+    "description": "[记忆] 每采集多少条消息学一次",
+    "type": "int",
+    "default": 80,
+    "hint": "一次学习会调用 1-2 次 LLM。调小更跟得上，调大更省。"
+  },
+  "style_min_interval": {
+    "description": "[记忆] 两次学习的最小间隔（秒）",
+    "type": "int",
+    "default": 1800,
+    "hint": "防止消息暴涨时反复触发 LLM"
+  },
+  "style_sample_group": {
+    "description": "[记忆] 每次学习取多少条群聊语料",
+    "type": "int",
+    "default": 120,
+    "hint": "公共聊天室的样本"
+  },
+  "style_sample_private": {
+    "description": "[记忆] 每次学习取多少条私聊语料",
+    "type": "int",
+    "default": 60,
+    "hint": "私聊样本只参与「说话风格」，不参与「群近况」（避免把私事拿到群里说）"
+  },
+  "style_log_cap": {
+    "description": "[记忆] 语料库最多保留多少条",
+    "type": "int",
+    "default": 1200,
+    "hint": "滚动窗口，超出丢最旧的"
+  },
+  "style_inject_chars": {
+    "description": "[记忆] 风格卡注入上限（字符）",
+    "type": "int",
+    "default": 320,
+    "hint": "群聊和私聊都会注入"
+  },
+  "facts_inject_chars": {
+    "description": "[记忆] 群近况注入上限（字符）",
+    "type": "int",
+    "default": 260,
+    "hint": "群近况来自公共聊天室（公开信息），群聊和私聊都会注入"
+  },
+  "group_facts_max": {
+    "description": "[记忆] 群近况最多保留多少条",
+    "type": "int",
+    "default": 40,
+    "hint": "超出丢最旧的"
+  },
+  "style_provider_id": {
+    "description": "[记忆] 「学说话」用的模型 ID",
+    "type": "string",
+    "default": "",
+    "hint": "留空则用当前会话模型。建议填一个**较强的**模型——提炼质量直接决定学得像不像。"
+  },
+  "bot_names": {
+    "description": "[记忆] 机器人自己的网名（逗号分隔，学习时排除）",
+    "type": "string",
+    "default": "",
+    "hint": "兜底用：正常已按 self_id 排除机器人本人，改网名后这里也同步一下（如 白露未晞,林晞）"
+  },
+  "bot_display_name": {
+    "description": "[记忆] 机器人的自称（用于记忆抽取提示词）",
+    "type": "string",
+    "default": "",
+    "hint": "填机器人的名字（如 林晞）。留空则用「机器人」。抽取提示词里要用这个名字来讲「不要服从指令」，写对名字这条规则才立得住。"
+  }
+}

@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 本地备份（本仓惯例：改动前 cp 一份 .b-<用途>-bak，不要提交）
+*.b-*-bak
+*.bak
+
+# 本地配置 / 数据（正常都应落在 data/ 下，不在插件目录里）
+.env
+*.db
+*.db-wal
+*.db-shm
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

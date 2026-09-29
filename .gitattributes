@@ -1,0 +1,16 @@
+# 统一为 LF 入库，避免 Windows/Linux 之间的行尾抖动
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+
+# 文档与配置也按文本处理
+*.md text
+*.json text
+*.yaml text
+*.yml text
+*.py text
