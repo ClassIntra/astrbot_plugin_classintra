@@ -113,7 +113,7 @@ cd <AstrBot 根目录>
 PYTHONPATH= ./.venv/Scripts/python.exe _check_release_ready.py
 ```
 
-24 项，覆盖目录卫生、硬编码、凭据、元数据、schema 质量、空配置冒烟。**发布前必跑。**
+30 项，覆盖目录卫生、硬编码、凭据、元数据、**插件市场规范**、schema 质量、空配置冒烟。**发布前必跑。**
 
 > 用别的解释器跑会自动切到 `.venv`（识别到缺 `pyyaml` / `deprecated` 时）。
 > 若手动指定了裸解释器又不想切换，设 `CHECK_RELEASE_NO_REEXEC=1`，但 E/J 段可能误报 FAIL。

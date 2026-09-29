@@ -22,7 +22,9 @@
 
 文档与元数据：
 
-- 补 `display_name` / `short_desc` / `help` / `repo`，新增 `README.md`、`LICENSE`（MIT）、`logo.png`。
+- 补 `display_name` / `short_desc` / `help` / `repo` / `tags`，新增 `README.md`、`LICENSE`（MIT）、
+  `logo.png`、`docs/`（架构 / 配置 / API / 工具 / 部署 / 开发 / 排障七篇）。
+- `version` 改为纯语义化 `2.0.0`（原先带 `v` 前缀，不符合插件市场规范的版本比较口径）。
 
 ### 兼容性说明
 

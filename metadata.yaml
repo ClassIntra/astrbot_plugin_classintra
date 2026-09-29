@@ -25,9 +25,17 @@ help: |
   classintra_admin / classintra_admin_confirm / classintra_admin_cancel、download_video。
 
   详见仓库 README。
-version: v2.0.0
+version: 2.0.0
 author: Nevino
 repo: https://github.com/ClassIntra/astrbot_plugin_classintra
+# 市场标签：用于插件市场的分类与搜索（可选字段）。
+# 取值沿用市场里已有插件在用的词，别自造生僻词。
+tags:
+  - 工具
+  - 记忆
+  - 管理
+  - 下载
+  - 集成
 # 未声明 astrbot_version：本插件用到 on_llm_request / on_agent_done / after_message_sent
 # 等较新的钩子，仅在 AstrBot v4.28 上实测过，低版本未验证，故不写死兼容区间以免误放行。
 # 不写 support_platforms = 全部平台可用（本插件用 @filter.platform_adapter_type(ALL) 注册）。

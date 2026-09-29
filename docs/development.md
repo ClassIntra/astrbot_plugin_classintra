@@ -146,7 +146,7 @@ tool_loop_agent_runner: Agent 使用工具: [...]
 
    > 用别的解释器跑也行：脚本检测到缺 `pyyaml` / `deprecated` 会**自动切到 `.venv`** 重新执行（`CHECK_RELEASE_NO_REEXEC=1` 可禁用）。
 
-   共 24 项，全 PASS 才能发。分段：
+   共 30 项，全 PASS 才能发。分段：
 
    | 段 | 检查 |
    |---|---|
@@ -157,15 +157,26 @@ tool_loop_agent_runner: Agent 使用工具: [...]
    | E | metadata 必备字段齐全、`repo` 是有效 URL |
    | F | CHANGELOG 顶部与 metadata 版本一致 |
    | G | 必备文件齐全（README/LICENSE/logo/metadata/schema/main/requirements） |
+   | K | **插件市场规范**：`version` 纯语义化（不带 `v`）、`author`/`name` 合法且 `name` 以 `astrbot_plugin_` 开头、`repo` 是合规 GitHub HTTPS URL、`tags` 是字符串数组、打包体积 ≤ 16MB |
    | H | schema 每项都有 `description` + `type` + `hint` |
    | I | **代码引用的配置键都在 schema 里** |
    | J | 空配置冒烟：路径不报错、`download` 返回「未启用」而非抛异常 |
+
+   > K 段对应[插件市场 JSON 规范](https://docs.astrbot.app/dev/plugin-market/2026-06-27.html)：
+   > 市场记录里 `author` / `name` / `version` 必须与 `metadata.yaml` **精确相等**，插件身份
+   > 由 `author + "/" + name` 派生 —— 其中任何一项写错，上架就会失败。
 
    > 脚本开头 `sys.dont_write_bytecode = True` —— 它会 import 插件，别因此生成 `__pycache__` 把自己判不合格。
 
 4. **同步发布资产**：`logo.png`（512×512，来自品牌方形标）、`README.md`、`docs/`；
 5. **提交**：常规提交信息，说明「新增/修复什么 + 为什么」；
-6. **发市场**：推公开仓库 → 提 PR 到 AstrBot 插件广场索引。`market/index.json` 里若登记本插件，**version 必须等于 `metadata.yaml`**，否则索引失信。
+6. **发市场**：仓库推公开后，到 **<https://cloud.astrbot.app/publish>** 提交（需注册
+   AstrBot Cloud 账号）。系统会自动解析仓库里的 `metadata.yaml`。
+
+   > ⚠️ 旧的 `AstrBotDevs/AstrBot_Plugins_Collection` **提 PR 方式已弃用**，别再往那儿提。
+   > 上架要过自动审核（AI 代码审查会看阻塞调用、硬编码路径、未使用导入等），
+   > 打包体积 **≤ 16MB**（本插件约 0.28MB），仓库里不要留 `.git`/`__pycache__`/`node_modules`。
+   > 首次上架后再更新版本**不需要重新提交**，市场会按 `metadata.yaml.version` 检测更新。
 
 ### 合并后的模块不要用旧脚本重新生成
 
